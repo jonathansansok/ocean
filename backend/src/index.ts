@@ -5,6 +5,7 @@ import swaggerUi from "swagger-ui-express";
 import { productsRouter } from "./routes/products.js";
 import { ordersRouter } from "./routes/orders.js";
 import { openapi } from "./swagger.js";
+import { authRouter } from "./routes/auth.js";
 
 const app = express();
 
@@ -17,6 +18,7 @@ app.get("/health", (req, res) => {
 });
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapi));
+app.use("/auth", authRouter);
 
 app.use("/products", productsRouter);
 app.use("/orders", ordersRouter);

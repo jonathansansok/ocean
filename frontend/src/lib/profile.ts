@@ -1,19 +1,14 @@
-import { supabase } from "./supabase";
+import { apiFetch } from "./api";
+
+export type Profile = {
+  id: string;
+  email: string;
+  role: "admin" | "mesero";
+};
 
 export async function fetchMyProfile() {
-  const u = await supabase.auth.getUser();
-  console.log("[profile] getUser", u.data.user?.id);
-
-  if (!u.data.user) return null;
-
-  const q = await supabase
-    .from("profiles")
-    .select("id,email,role")
-    .eq("id", u.data.user.id)
-    .maybeSingle();
-
-  console.log("[profile] db", { error: q.error?.message, data: q.data });
-
-  if (q.error) throw new Error(q.error.message);
-  return q.data;
+  console.log("[profile] fetchMyProfile via backend");
+  const r = await apiFetch("/auth/me");
+  console.log("[profile] /auth/me", r);
+  return (r?.data || null) as Profile | null;
 }

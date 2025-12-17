@@ -2,55 +2,46 @@ import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Link, useNavigate } from "react-router-dom";
+import { supabase } from "../lib/supabase";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../auth/useAuth";
 
 const schema = z.object({
   email: z.string().email(),
   password: z.string().min(6),
-  role: z.enum(["admin", "mesero"]),
 });
 type FormValues = z.infer<typeof schema>;
 
-const base = import.meta.env.VITE_API_BASE as string;
-
-export default function Register() {
+export default function Login() {
   const [loading, setLoading] = useState(false);
   const nav = useNavigate();
+  const { refresh } = useAuth();
 
   const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
     resolver: zodResolver(schema),
-    defaultValues: { role: "mesero" },
   });
 
   const onSubmit = async (v: FormValues) => {
     setLoading(true);
-    console.log("[register] submit", v);
+    console.log("[login] submit", v);
 
-    try {
-      const res = await fetch(`${base}/auth/register`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(v),
-      });
+    const r = await supabase.auth.signInWithPassword({ email: v.email, password: v.password });
+    console.log("[login] signInWithPassword", { ok: !!r.data.session, err: r.error?.message });
 
-      const text = await res.text();
-      console.log("[register] res", { ok: res.ok, status: res.status, text });
-
-      if (!res.ok) throw new Error(text || "register failed");
-
-      alert("Cuenta creada. Ahora logueate.");
-      nav("/login");
-    } catch (e: any) {
-      console.log("[register] error", e?.message);
-      alert(e?.message || "error");
-    } finally {
+    if (r.error) {
       setLoading(false);
+      alert(r.error.message);
+      return;
     }
+
+    await refresh();
+    setLoading(false);
+    nav("/dashboard");
   };
 
   return (
     <div className="p-6 max-w-md mx-auto">
-      <h1 className="text-xl font-semibold">Register</h1>
+      <h1 className="text-xl font-semibold">Login</h1>
 
       <form onSubmit={handleSubmit(onSubmit)} className="mt-4 space-y-3">
         <input className="border p-2 w-full" placeholder="email" {...register("email")} />
@@ -59,19 +50,13 @@ export default function Register() {
         <input className="border p-2 w-full" placeholder="password" type="password" {...register("password")} />
         {errors.password && <div className="text-sm text-red-600">{errors.password.message}</div>}
 
-        <select className="border p-2 w-full" {...register("role")}>
-          <option value="mesero">mesero</option>
-          <option value="admin">admin</option>
-        </select>
-        {errors.role && <div className="text-sm text-red-600">{errors.role.message}</div>}
-
         <button disabled={loading} className="border px-4 py-2 w-full">
-          {loading ? "..." : "Crear cuenta"}
+          {loading ? "..." : "Entrar"}
         </button>
       </form>
 
       <div className="mt-4 text-sm">
-        Ya tenés cuenta? <Link className="underline" to="/login">Login</Link>
+        No tenés cuenta? <Link className="underline" to="/register">Register</Link>
       </div>
     </div>
   );
