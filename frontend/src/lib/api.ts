@@ -1,12 +1,11 @@
-//app\frontend\src\lib\api.ts
-import { supabase } from "./supabase";
+import { supabase } from "./supabase"
 
-const base = import.meta.env.VITE_API_BASE as string;
+const base = import.meta.env.VITE_API_BASE as string
 
-export async function apiFetch(path: string, init?: RequestInit) {
-  const session = await supabase.auth.getSession();
-  const token = session.data.session?.access_token || "";
-  console.log("[apiFetch][REQ]", { path, hasToken: !!token, base });
+export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
+  const session = await supabase.auth.getSession()
+  const token = session.data.session?.access_token || ""
+  console.log("[apiFetch][REQ]", { path, hasToken: !!token, base })
 
   const res = await fetch(`${base}${path}`, {
     ...init,
@@ -15,11 +14,11 @@ export async function apiFetch(path: string, init?: RequestInit) {
       ...(init?.headers || {}),
       Authorization: `Bearer ${token}`,
     },
-  });
+  })
 
-  const text = await res.text();
-  console.log("[apiFetch][RES]", { path, ok: res.ok, status: res.status, text });
+  const text = await res.text()
+  console.log("[apiFetch][RES]", { path, ok: res.ok, status: res.status, text })
 
-  if (!res.ok) throw new Error(text || "Request failed");
-  return text ? JSON.parse(text) : null;
+  if (!res.ok) throw new Error(text || "Request failed")
+  return text ? (JSON.parse(text) as T) : (null as T)
 }

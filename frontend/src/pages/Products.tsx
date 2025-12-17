@@ -1,58 +1,79 @@
-import { useEffect, useState } from "react";
-import NavBar from "../components/NavBar";
-import { apiFetch } from "../lib/api";
-import { useAuth } from "../auth/useAuth";
-import { useForm } from "react-hook-form";
-import { z } from "zod";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { useEffect, useState } from "react"
+import NavBar from "../components/NavBar"
+import { apiFetch } from "../lib/api"
+import { useAuth } from "../auth/useAuth"
+import { useForm } from "react-hook-form"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { isApiErr, type ApiResponse } from "../types/api"
+import type { Product } from "../types/models"
 
 const schema = z.object({
   name: z.string().min(1),
-  price: z.coerce.number().positive(),
-});
-type FormValues = z.infer<typeof schema>;
+  price: z.number().positive(),
+})
+type FormValues = z.infer<typeof schema>
 
 export default function Products() {
-  const { profile } = useAuth();
-  const [products, setProducts] = useState<any[]>([]);
-  const [loading, setLoading] = useState(true);
+  const { profile } = useAuth()
+  const [products, setProducts] = useState<Product[]>([])
+  const [loading, setLoading] = useState(true)
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormValues>({
-    resolver: zodResolver(schema),
+  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormValues, unknown, FormValues>({
+    resolver: zodResolver<FormValues, unknown, FormValues>(schema),
     defaultValues: { name: "", price: 0 },
-  });
+  })
 
   const load = async () => {
-    setLoading(true);
-    console.log("[products] load");
+    setLoading(true)
+    console.log("[products] load")
     try {
-      const r = await apiFetch("/products");
-      console.log("[products] res", r);
-      setProducts(r.data || []);
-    } catch (e: any) {
-      console.log("[products] error", e?.message);
-      alert(e?.message || "error");
+      const r = await apiFetch<ApiResponse<Product[]>>("/products")
+      console.log("[products] res", r)
+
+      if (isApiErr(r)) {
+        console.log("[products] api err", r.error)
+        throw new Error(r.error)
+      }
+
+      setProducts(r.data)
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "error"
+      console.log("[products] error", msg)
+      alert(msg)
     } finally {
-      setLoading(false);
+      setLoading(false)
     }
-  };
+  }
 
   const onCreate = async (v: FormValues) => {
-    console.log("[products] create submit", v, "role", profile?.role);
+    console.log("[products] create submit", v, "role", profile?.role)
     try {
-      const r = await apiFetch("/products", { method: "POST", body: JSON.stringify(v) });
-      console.log("[products] create ok", r);
-      reset({ name: "", price: 0 });
-      load();
-    } catch (e: any) {
-      console.log("[products] create error", e?.message);
-      alert(e?.message || "error");
+      const r = await apiFetch<ApiResponse<Product>>("/products", {
+        method: "POST",
+        body: JSON.stringify(v),
+      })
+      console.log("[products] create ok", r)
+
+      if (isApiErr(r)) {
+        console.log("[products] api err", r.error)
+        throw new Error(r.error)
+      }
+
+      reset({ name: "", price: 0 })
+      load()
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "error"
+      console.log("[products] create error", msg)
+      alert(msg)
     }
-  };
+  }
 
-  useEffect(() => { load(); }, []);
+  useEffect(() => {
+    load()
+  }, [])
 
-  const isAdmin = profile?.role === "admin";
+  const isAdmin = profile?.role === "admin"
 
   return (
     <div>
@@ -68,7 +89,13 @@ export default function Products() {
               <input className="border p-2 w-full" placeholder="name" {...register("name")} />
               {errors.name && <div className="text-sm text-red-600">{errors.name.message}</div>}
 
-              <input className="border p-2 w-full" placeholder="price" {...register("price")} />
+              <input
+                className="border p-2 w-full"
+                placeholder="price"
+                type="number"
+                step="0.01"
+                {...register("price", { valueAsNumber: true })}
+              />
               {errors.price && <div className="text-sm text-red-600">{errors.price.message}</div>}
 
               <button className="border px-3 py-1">Create</button>
@@ -82,7 +109,9 @@ export default function Products() {
           </div>
         )}
 
-        <button className="border px-3 py-1 mt-4" onClick={load}>Refresh</button>
+        <button className="border px-3 py-1 mt-4" onClick={load}>
+          Refresh
+        </button>
 
         {loading && <div className="mt-4">Loading...</div>}
 
@@ -99,5 +128,5 @@ export default function Products() {
         )}
       </div>
     </div>
-  );
+  )
 }

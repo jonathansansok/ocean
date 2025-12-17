@@ -1,6 +1,6 @@
 export type Role = "admin" | "mesero"
 
-export type AuthedUser = {
+export type Profile = {
   id: string
   email: string
   role: Role
