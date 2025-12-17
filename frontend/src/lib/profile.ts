@@ -1,3 +1,4 @@
+//app\frontend\src\lib\profile.ts
 import { apiFetch } from "./api";
 
 export type Profile = {

@@ -19,7 +19,7 @@ ordersRouter.get("/", requireAuth, async (req, res) => {
   res.json({ data: q.data });
 });
 
-ordersRouter.post("/", requireAuth, requireRole(["admin"]), async (req, res) => {
+ordersRouter.post("/", requireAuth, requireRole(["admin", "mesero"]), async (req, res) => {
   console.log("[orders][POST] body", req.body, "user", req.user);
 
   const parsed = createOrderSchema.safeParse(req.body);
