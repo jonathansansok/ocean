@@ -1,8 +1,11 @@
 # 🌊 Oceans React Challenge – Full Stack (React-TS + Express-TS + Supabase)
 ### 🐳 Nota para Docker
 En DOCKER usar app/frontend/.env.docker
+
 VITE_API_BASE=http://backend:8080
+
 VITE_SUPABASE_URL=https...
+
 VITE_SUPABASE_ANON_KEY=e...
 
 Aplicación web para la gestión de órdenes en un restaurante (productos + órdenes + dashboard), con autenticación, roles y despliegue completo.
