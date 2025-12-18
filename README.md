@@ -30,15 +30,11 @@
 - App: `http://localhost:5173`
 
 ### Opción B — Docker (nota importante)
-En Docker el frontend DEBE usar `.env.docker` (no usar `.env`).  
+   `.env.docker` (no usar `.env`).  
 - `VITE_API_BASE=http://backend:8080`
 - `VITE_SUPABASE_URL=...`
 - `VITE_SUPABASE_ANON_KEY=...`
 -  Ejecutar `docker compose up --build`
-Backend (Docker):
-- Ir a `app/backend`
-- Build: `docker build -t oceans-backend .`
-- Run: `docker run --env-file .env -p 8080:8080 oceans-backend`
 
 ---
 
