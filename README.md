@@ -1,6 +1,11 @@
 # 🌊 Oceans React Challenge – Full Stack (React-TS + Express-TS + Supabase)
 
-Aplicación web para la gestión de órdenes en un restaurante (productos + órdenes + dashboard), con autenticación, roles y despliegue completo.
+## 🚀 Demo (Vercel)
+
+- **Frontend:** https://ocean-kihd.vercel.app/
+- **Backend (Health):** https://ocean-snowy.vercel.app/health
+- **Swagger / OpenAPI (local):** http://localhost:8080/docs/
+
 
 ---
 
@@ -25,24 +30,15 @@ Aplicación web para la gestión de órdenes en un restaurante (productos + órd
 - App: `http://localhost:5173`
 
 ### Opción B — Docker (nota importante)
-En Docker el frontend DEBE usar `app/frontend/.env.docker` (no usar `app/frontend/.env`).  
-Ejemplo esperado dentro de `app/frontend/.env.docker`:
+En Docker el frontend DEBE usar `.env.docker` (no usar `.env`).  
 - `VITE_API_BASE=http://backend:8080`
 - `VITE_SUPABASE_URL=...`
 - `VITE_SUPABASE_ANON_KEY=...`
-
+-  Ejecutar `docker compose up --build`
 Backend (Docker):
 - Ir a `app/backend`
 - Build: `docker build -t oceans-backend .`
 - Run: `docker run --env-file .env -p 8080:8080 oceans-backend`
-
----
-
-## 🚀 Demo (Vercel)
-
-- **Frontend:** https://ocean-kihd.vercel.app/
-- **Backend (Health):** https://ocean-snowy.vercel.app/health
-- **Swagger / OpenAPI (local):** http://localhost:8080/docs/
 
 ---
 
