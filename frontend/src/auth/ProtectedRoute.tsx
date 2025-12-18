@@ -6,7 +6,7 @@ export default function ProtectedRoute({ children }: { children: React.ReactNode
 
   console.log("[ProtectedRoute]", { loading, authed });
 
-  if (loading) return <div className="p-6">Loading...</div>;
+  if (!authed && loading) return <div className="p-6">Loading...</div>;
   if (!authed) return <Navigate to="/login" replace />;
   return <>{children}</>;
 }
