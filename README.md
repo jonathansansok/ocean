@@ -1,4 +1,4 @@
-# 🌊 Oceans React Challenge – Full Stack (React + Express + Supabase)
+# 🌊 Oceans React Challenge – Full Stack (React-TS + Express-TS + Supabase)
 ### 🐳 Nota para Docker
 En DOCKER usar app\frontend\.env.docker
 VITE_API_BASE=http://backend:8080
