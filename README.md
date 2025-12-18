@@ -7,7 +7,6 @@ Aplicación web para la gestión de órdenes en un restaurante (productos + órd
 - **Frontend:** https://ocean-kihd.vercel.app/
 - **Backend:** https://ocean-snowy.vercel.app/health
 - **Swagger / OpenAPI:** http://localhost:8080/docs/
-- **Health:** https://ocean-snowy.vercel.app/health
 
 ## ✅ Cobertura de requisitos del challenge
 
@@ -92,16 +91,6 @@ Para probar rápido:
 
 ## 📁 Estructura del repo
 
-# 🌊 Oceans React Challenge – Full Stack (React + Express + Supabase)
-
-Aplicación web para la gestión de órdenes en un restaurante (productos + órdenes + dashboard), con autenticación, roles y despliegue completo.
-
-## 🚀 Demo (Vercel)
-
-- **Frontend:** https://ocean-kihd.vercel.app/
-- **Backend:** https://ocean-snowy.vercel.app/
-- **Swagger / OpenAPI:** https://ocean-snowy.vercel.app/docs
-- **Health:** https://ocean-snowy.vercel.app/health
 
 ---
 
