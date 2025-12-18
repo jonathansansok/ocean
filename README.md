@@ -30,7 +30,7 @@
 - App: `http://localhost:5173`
 
 ### Opción B — Docker (nota importante)
-   `.env.docker` (no usar `.env`).  
+   Tener`.env.docker` (no usar `.env`).  
 - `VITE_API_BASE=http://backend:8080`
 - `VITE_SUPABASE_URL=...`
 - `VITE_SUPABASE_ANON_KEY=...`
