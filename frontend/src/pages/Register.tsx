@@ -7,13 +7,21 @@ import Swal from "sweetalert2";
 import { Card, CardBody, CardHeader } from "../components/ui/Card";
 import FormField from "../components/ui/FormField";
 import Button from "../components/ui/Button";
+import PasswordInput from "../components/ui/PasswordInput";
 import { toastErr, toastOk } from "../lib/notify";
 
-const schema = z.object({
-  email: z.string().email("Email inválido"),
-  password: z.string().min(6, "Mínimo 6 caracteres"),
-  role: z.enum(["admin", "mesero"]),
-});
+const schema = z
+  .object({
+    email: z.string().email("Email inválido"),
+    password: z.string().min(6, "Mínimo 6 caracteres"),
+    confirmPassword: z.string().min(6, "Mínimo 6 caracteres"),
+    role: z.enum(["admin", "mesero"]),
+  })
+  .refine((v) => v.password === v.confirmPassword, {
+    message: "Las contraseñas no coinciden",
+    path: ["confirmPassword"],
+  });
+
 type FormValues = z.infer<typeof schema>;
 
 const base = import.meta.env.VITE_API_BASE as string;
@@ -33,13 +41,21 @@ export default function Register() {
 
   const onSubmit = async (v: FormValues) => {
     setLoading(true);
-    console.log("[register] submit", v);
+    console.log("[register] submit raw", v);
+
+    const payload = (({ email, password, role }) => ({
+      email,
+      password,
+      role,
+    }))(v);
+
+    console.log("[register] submit payload", payload);
 
     try {
       const res = await fetch(`${base}/auth/register`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(v),
+        body: JSON.stringify(payload),
       });
 
       const text = await res.text();
@@ -92,25 +108,42 @@ export default function Register() {
                 <input
                   className="input"
                   placeholder="email"
+                  autoComplete="email"
                   {...register("email")}
                 />
               </FormField>
 
-              <FormField label="Password" error={errors.password?.message}>
-                <input
-                  className="input"
-                  placeholder="password"
-                  type="password"
-                  {...register("password")}
+              <FormField label="Contraseña" error={errors.password?.message}>
+                <PasswordInput
+                  reg={register("password")}
+                  placeholder="contraseña"
+                  autoComplete="new-password"
+                  disabled={loading}
                 />
               </FormField>
 
               <FormField
-                label="Role"
+                label="Confirmar Contraseña"
+                error={errors.confirmPassword?.message}
+              >
+                <PasswordInput
+                  reg={register("confirmPassword")}
+                  placeholder="repetir contraseña"
+                  autoComplete="new-password"
+                  disabled={loading}
+                />
+              </FormField>
+
+              <FormField
+                label="Rol"
                 hint="Mesero por defecto"
                 error={errors.role?.message}
               >
-                <select className="select" {...register("role")}>
+                <select
+                  className="select"
+                  {...register("role")}
+                  disabled={loading}
+                >
                   <option value="mesero">mesero</option>
                   <option value="admin">admin</option>
                 </select>
@@ -124,10 +157,15 @@ export default function Register() {
               >
                 Crear cuenta
               </Button>
-              <div className="text-sm text-slate-400">
-                Ya tenés cuenta?{" "}
-                <Link className="underline text-slate-200" to="/login">
+
+              <div className="pt-2 flex items-center justify-center gap-2 text-sm text-slate-400">
+                <span>Ya tenés cuenta?</span>
+                <Link
+                  to="/login"
+                  className="inline-flex items-center gap-2 rounded-full border border-slate-700/60 bg-slate-900/40 px-3 py-1 font-semibold text-slate-100 shadow-[0_8px_20px_rgba(0,0,0,0.25)] transition hover:bg-slate-900/60 hover:border-slate-600/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                >
                   Login
+                  <span className="text-slate-400">→</span>
                 </Link>
               </div>
             </form>

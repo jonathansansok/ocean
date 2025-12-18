@@ -8,6 +8,7 @@ import { useAuth } from "../auth/useAuth";
 import { Card, CardBody, CardHeader } from "../components/ui/Card";
 import FormField from "../components/ui/FormField";
 import Button from "../components/ui/Button";
+import PasswordInput from "../components/ui/PasswordInput";
 import { toastErr, toastOk } from "../lib/notify";
 
 const schema = z.object({
@@ -35,6 +36,7 @@ export default function Login() {
       email: v.email,
       password: v.password,
     });
+
     console.log("[login] signInWithPassword", {
       ok: !!r.data.session,
       err: r.error?.message,
@@ -69,16 +71,18 @@ export default function Login() {
                 <input
                   className="input"
                   placeholder="email"
+                  autoComplete="email"
+                  disabled={loading}
                   {...register("email")}
                 />
               </FormField>
 
               <FormField label="Password" error={errors.password?.message}>
-                <input
-                  className="input"
+                <PasswordInput
+                  reg={register("password")}
                   placeholder="password"
-                  type="password"
-                  {...register("password")}
+                  autoComplete="current-password"
+                  disabled={loading}
                 />
               </FormField>
 
@@ -91,10 +95,14 @@ export default function Login() {
                 Entrar
               </Button>
 
-              <div className="text-sm text-slate-400">
-                No tenés cuenta?{" "}
-                <Link className="underline text-slate-200" to="/register">
+              <div className="pt-2 flex items-center justify-center gap-2 text-sm text-slate-400">
+                <span>No tenés cuenta?</span>
+                <Link
+                  to="/register"
+                  className="inline-flex items-center gap-2 rounded-full border border-slate-700/60 bg-slate-900/40 px-3 py-1 font-semibold text-slate-100 shadow-[0_8px_20px_rgba(0,0,0,0.25)] transition hover:bg-slate-900/60 hover:border-slate-600/70 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-400/40 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950"
+                >
                   Register
+                  <span className="text-slate-400">→</span>
                 </Link>
               </div>
             </form>
