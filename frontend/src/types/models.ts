@@ -5,12 +5,13 @@ export type Product = {
 };
 
 export type OrderItem = {
-  id: number;
-  product_id: number;
-  qty: number;
-  unit_price: number;
-  line_total: number;
-};
+  id: number
+  product_id: number
+  qty: number
+  unit_price: number
+  line_total: number
+  product?: { id: number; name: string; price: number } | null
+}
 
 export type Order = {
   id: number;

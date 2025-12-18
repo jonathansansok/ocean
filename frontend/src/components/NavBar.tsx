@@ -41,15 +41,15 @@ export default function NavBar() {
 
           <div className="hidden sm:flex items-center gap-1 ml-2">
             <NavLink to="/dashboard" className={itemClass}>Dashboard</NavLink>
-            <NavLink to="/products" className={itemClass}>Products</NavLink>
-            <NavLink to="/orders" className={itemClass}>Orders</NavLink>
+            <NavLink to="/products" className={itemClass}>Productos</NavLink>
+            <NavLink to="/orders" className={itemClass}>Órdenes</NavLink>
           </div>
         </div>
 
         <div className="flex items-center gap-3">
           <div className="hidden md:flex flex-col items-end">
             <div className="text-sm font-semibold text-slate-200">{profile?.email}</div>
-            <div className="text-xs text-slate-400">role: {profile?.role}</div>
+            <div className="text-xs text-slate-400">Rol: {profile?.role}</div>
           </div>
 
           <Button variant="danger" size="sm" onClick={onLogout}>

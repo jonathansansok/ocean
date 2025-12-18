@@ -1,8 +1,8 @@
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useState } from "react"
 import NavBar from "../components/NavBar"
 import { apiFetch } from "../lib/api"
 import { isApiErr, type ApiResponse } from "../types/api"
-import type { Order, Product } from "../types/models"
+import type { Order } from "../types/models"
 import { Card, CardBody, CardHeader } from "../components/ui/Card"
 import StatusBadge from "../components/ui/StatusBadge"
 import EmptyState from "../components/ui/EmptyState"
@@ -12,29 +12,17 @@ import { formatDateTime } from "../lib/format"
 
 export default function Dashboard() {
   const [orders, setOrders] = useState<Order[]>([])
-  const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
-
-  const productMap = useMemo(() => {
-    const m = new Map<number, Product>()
-    products.forEach((p) => m.set(p.id, p))
-    console.log("[dashboard] productMap size", m.size)
-    return m
-  }, [products])
 
   const load = async () => {
     setLoading(true)
     console.log("[dashboard] load")
     try {
-      const p = await apiFetch<ApiResponse<Product[]>>("/products")
       const o = await apiFetch<ApiResponse<Order[]>>("/orders")
-      console.log("[dashboard] products", p)
       console.log("[dashboard] orders", o)
 
-      if (isApiErr(p)) throw new Error(p.error)
       if (isApiErr(o)) throw new Error(o.error)
 
-      setProducts(p.data)
       setOrders(o.data)
       toastOk("Dashboard actualizado")
     } catch (e: unknown) {
@@ -67,51 +55,62 @@ export default function Dashboard() {
         </div>
 
         <div className="mt-5 grid gap-3">
-          {loading ? (
-            <div className="card p-6 text-sm text-slate-300">Loading...</div>
-          ) : null}
+          {loading ? <div className="card p-6 text-sm text-slate-300">Loading...</div> : null}
 
           {!loading && !orders.length ? (
             <EmptyState title="No hay órdenes todavía" description="Creá una orden desde Orders" />
           ) : null}
 
           {!loading &&
-            orders.map((o) => (
-              <Card key={o.id}>
-                <CardHeader>
-                  <div className="flex items-center justify-between gap-3">
-                    <div className="flex items-center gap-3">
-                      <div className="text-sm font-black">Order #{o.id}</div>
-                      <StatusBadge status={o.status} />
-                    </div>
-                    <div className="text-sm font-black text-emerald-200">${o.total}</div>
-                  </div>
-                  <div className="mt-1 text-xs text-slate-400">
-                    {formatDateTime(o.created_at)} · created by {o.created_by_profile?.email || o.created_by || "-"}
-                  </div>
-                </CardHeader>
+            orders.map((o) => {
+              const total = Number(o.total || 0)
+              const createdLabel = o.created_by_profile?.email || o.created_by || "-"
 
-                <CardBody>
-                  <div className="space-y-2">
-                    {(o.order_items || []).map((it) => {
-                      const prod = productMap.get(it.product_id)
-                      const name = prod?.name || `Product #${it.product_id}`
-                      return (
-                        <div key={it.id} className="flex items-center justify-between gap-3 rounded-xl border border-slate-800 bg-slate-950/40 px-3 py-2">
-                          <div className="min-w-0">
-                            <div className="text-sm font-semibold truncate">{name}</div>
-                            <div className="text-xs text-slate-400">
-                              qty {it.qty} · unit ${it.unit_price}
+              return (
+                <Card key={o.id}>
+                  <CardHeader>
+                    <div className="flex items-center justify-between gap-3">
+                      <div className="flex items-center gap-3">
+                        <div className="text-sm font-black">OrdeN #{o.id}</div>
+                        <StatusBadge status={o.status} />
+                      </div>
+                      <div className="text-sm font-black text-emerald-200">${total.toFixed(2)}</div>
+                    </div>
+
+                    <div className="mt-1 text-xs text-slate-400">
+                      {formatDateTime(o.created_at)} · created by {createdLabel}
+                    </div>
+                  </CardHeader>
+
+                  <CardBody>
+                    <div className="space-y-2">
+                      {(o.order_items || []).map((it) => {
+                        console.log("[dashboard] render item", { orderId: o.id, itemId: it.id, product: it.product })
+
+                        const name = it.product?.name || `Product #${it.product_id}`
+                        const unit = Number(it.unit_price || 0)
+                        const line = Number(it.line_total || 0)
+
+                        return (
+                          <div
+                            key={it.id}
+                            className="flex items-center justify-between gap-3 rounded-xl border border-slate-800 bg-slate-950/40 px-3 py-2"
+                          >
+                            <div className="min-w-0">
+                              <div className="text-sm font-semibold truncate">{name}</div>
+                              <div className="text-xs text-slate-400">
+                                Cant. {it.qty} · U. ${unit.toFixed(2)}
+                              </div>
                             </div>
+                            <div className="text-sm font-black">${line.toFixed(2)}</div>
                           </div>
-                          <div className="text-sm font-black">${it.line_total}</div>
-                        </div>
-                      )
-                    })}
-                  </div>
-                </CardBody>
-              </Card>
-            ))}
+                        )
+                      })}
+                    </div>
+                  </CardBody>
+                </Card>
+              )
+            })}
         </div>
       </div>
     </div>
