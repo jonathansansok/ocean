@@ -1,4 +1,7 @@
 # 🌊 Oceans React Challenge – Full Stack (React + Express + Supabase)
+### 🐳 Nota para Docker
+En DOCKER usar app\frontend\.env.docker
+VITE_API_BASE=http://backend:8080
 
 Aplicación web para la gestión de órdenes en un restaurante (productos + órdenes + dashboard), con autenticación, roles y despliegue completo.
 
@@ -8,7 +11,6 @@ Aplicación web para la gestión de órdenes en un restaurante (productos + órd
 - **Backend (Health):** https://ocean-snowy.vercel.app/health
 - **Swagger / OpenAPI (local):** http://localhost:8080/docs/
 
-EN DOCKER USAR! app\frontend\.env.docker
 
 
 ## ✅ Cobertura de requisitos del challenge
