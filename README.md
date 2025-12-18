@@ -10,6 +10,7 @@ Aplicación web para la gestión de órdenes en un restaurante (productos + órd
 1) Backend  
 - Ir a `app/backend`  
 - Instalar dependencias: `npm i`  
+- Configurar .env con CREDS. del email enviado
 - Levantar: `npm run dev`  
 - API: `http://localhost:8080`  
 - Health: `http://localhost:8080/health`  
@@ -18,6 +19,8 @@ Aplicación web para la gestión de órdenes en un restaurante (productos + órd
 2) Frontend  
 - Ir a `app/frontend`  
 - Instalar dependencias: `npm i`  
+- Configurar .env con CREDS. del email enviado
+- Agregar .env.docker con: `VITE_API_BASE=http://backend:8080`
 - Levantar: `npm run dev`  
 - App: `http://localhost:5173`
 
