@@ -363,7 +363,7 @@ Login como mesero y crear orden saved / closed: https://ocean-kihd.vercel.app/or
 
 Volver como admin y reasignar una orden a un mesero desde Orders
 
-Probar API desde Swagger: https://ocean-snowy.vercel.app/docs
+Probar API desde Swagger: http://localhost:8080/docs/
  (usar Bearer token)
 
 🧾 Notas de diseño
