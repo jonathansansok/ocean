@@ -1,20 +1,20 @@
 export type Product = {
-  id: number
-  name: string
-  price: number
-}
+  id: number;
+  name: string;
+  price: number;
+};
 
 export type OrderItem = {
-  id: number
-  product_id: number
-  qty: number
-  unit_price: number
-  line_total: number
-}
+  id: number;
+  product_id: number;
+  qty: number;
+  unit_price: number;
+  line_total: number;
+};
 
 export type Order = {
   id: number;
-  status: string;
+  status: "saved" | "closed";
   total: number;
   created_at: string;
   created_by: string | null;

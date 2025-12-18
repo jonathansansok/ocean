@@ -6,8 +6,7 @@ export const createProductSchema = z.object({
 });
 
 export const createOrderSchema = z.object({
-  status: z.enum(["saved", "closed"]).optional(),
-  assignedTo: z.string().uuid().optional(),
+  status: z.enum(["saved", "closed"]).default("saved"),
   items: z
     .array(
       z.object({
@@ -16,4 +15,12 @@ export const createOrderSchema = z.object({
       })
     )
     .min(1),
+});
+
+export const setOrderStatusSchema = z.object({
+  status: z.enum(["saved", "closed"]),
+});
+
+export const assignOrderSchema = z.object({
+  assignedTo: z.string().uuid(),
 });

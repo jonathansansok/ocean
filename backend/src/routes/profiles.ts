@@ -15,6 +15,11 @@ profilesRouter.get(
     const role = String(req.query.role || "");
     console.log("[profiles][GET] query", { role, user: req.user });
 
+    if (role && role !== "mesero" && role !== "admin") {
+      console.log("[profiles][GET] invalid role", { role });
+      return err(res, 400, "Invalid role");
+    }
+
     let q = supabaseAdmin.from("profiles").select("id,email,role").order("email", { ascending: true });
 
     if (role) q = q.eq("role", role);
