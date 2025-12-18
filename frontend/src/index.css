@@ -52,12 +52,29 @@
     @apply focus-visible:ring-2 focus-visible:ring-emerald-400/30 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950;
   }
 
-  .select {
-    @apply w-full rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2 text-slate-100;
-    @apply outline-none focus:border-slate-600;
-    @apply focus-visible:ring-2 focus-visible:ring-emerald-400/30 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950;
-  }
+.select {
+  @apply w-full rounded-2xl border border-slate-800 bg-slate-950/40 px-3 py-2 text-slate-100 outline-none
+  transition backdrop-blur-md appearance-none
+  hover:border-slate-600
+  focus-visible:border-emerald-400/50
+  focus-visible:ring-2 focus-visible:ring-emerald-400/20;
+}
+.select option {
+  background: rgba(2, 6, 23, 0.98);
+  color: rgb(226 232 240);
+  font-weight: 800;
+}
 
+.select option:disabled {
+  color: rgba(148, 163, 184, 0.55);
+  font-weight: 700;
+}
+
+.select optgroup {
+  background: rgba(2, 6, 23, 0.98);
+  color: rgb(226 232 240);
+  font-weight: 800;
+}
   .helper {
     @apply text-xs text-slate-400;
   }

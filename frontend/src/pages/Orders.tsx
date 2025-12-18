@@ -218,6 +218,15 @@ export default function Orders() {
   const assignOrder = async (orderId: number, assignedTo: string) => {
     console.log("[orders] assignOrder", { orderId, assignedTo });
 
+    if (!assignedTo) {
+      console.log("[orders] assignOrder blocked empty assignedTo", {
+        orderId,
+        assignedTo,
+      });
+      toastErr("Seleccioná un mesero válido");
+      return;
+    }
+
     const who = meseros.find((m) => m.id === assignedTo)?.email || assignedTo;
 
     const r0 = await Swal.fire({
@@ -264,8 +273,8 @@ export default function Orders() {
           <div>
             <h1 className="text-2xl font-black tracking-tight">Órdenes</h1>
             <div className="text-sm text-slate-400">
-              Un Mesero puede crear una orden y autosign. · Admin puede reasignar · Solo cierra el
-              mesero asignado o admin
+              Un Mesero puede crear una orden y autosign. · Admin puede
+              reasignar · Solo cierra el mesero asignado o admin
             </div>
           </div>
 
@@ -280,7 +289,7 @@ export default function Orders() {
               <div>
                 <div className="text-sm font-black">Crear orden</div>
                 <div className="text-xs text-slate-400">
-                  Total en tiempo real · UX con botones + / -
+                  Total en tiempo real · Solo puedes crear y se asigna a ti mismo.
                 </div>
               </div>
 
@@ -385,7 +394,7 @@ export default function Orders() {
               const canTouch = canTouchOrder(o);
               const isClosed = o.status === "closed";
               const assignedLabel =
-                o.assigned_to_profile?.email || o.assigned_to || "unassigned";
+                o.assigned_to_profile?.email || o.assigned_to || "Sin asignar";
               const createdLabel =
                 o.created_by_profile?.email || o.created_by || "-";
 
@@ -410,28 +419,74 @@ export default function Orders() {
 
                   <CardBody>
                     {isAdmin ? (
-                      <div className="mb-3 grid gap-2 sm:grid-cols-[1fr_auto] sm:items-center">
-                        <select
-                          className="select"
-                          value={o.assigned_to || ""}
-                          onChange={(e) => {
-                            const v = e.target.value;
-                            console.log("[orders] admin select assigned_to", {
-                              orderId: o.id,
-                              v,
-                            });
-                            if (v) assignOrder(o.id, v);
-                          }}
-                        >
-                          <option value="">unassigned</option>
-                          {meseros.map((m) => (
-                            <option key={m.id} value={m.id}>
-                              {m.email}
-                            </option>
-                          ))}
-                        </select>
+                      <div className="mb-3 flex flex-col gap-2 sm:flex-row sm:items-center">
+                        <div className="flex items-center gap-2">
+                          <div className="text-xs text-slate-400">
+                            Asignar a
+                          </div>
 
-                        <div className="text-xs text-slate-400">Reasign.</div>
+                          <div className="relative w-full sm:w-[280px]">
+                            <select
+                              id={`assign-${o.id}`}
+                              className="select pr-10 truncate"
+                              value={o.assigned_to || ""}
+                              onChange={(e) => {
+                                const v = e.target.value;
+                                console.log(
+                                  "[orders] admin select assigned_to",
+                                  { orderId: o.id, v }
+                                );
+                                if (!v) return;
+                                assignOrder(o.id, v);
+                              }}
+                            >
+                              <option value="" disabled>
+                                Sin asignar
+                              </option>
+
+                              {meseros.map((m) => {
+                                const short = (m.email || m.id)
+                                  .split("@")[0]
+                                  .slice(0, 18);
+                                return (
+                                  <option key={m.id} value={m.id}>
+                                    {short}
+                                  </option>
+                                );
+                              })}
+                            </select>
+
+                            <svg
+                              className="pointer-events-none absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M5.23 7.21a.75.75 0 0 1 1.06.02L10 10.94l3.71-3.71a.75.75 0 1 1 1.06 1.06l-4.24 4.25a.75.75 0 0 1-1.06 0L5.21 8.29a.75.75 0 0 1 .02-1.08z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </div>
+
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="ml-1"
+                            onClick={() => {
+                              console.log("[orders] click reasignar focus", {
+                                orderId: o.id,
+                              });
+                              const el = document.getElementById(
+                                `assign-${o.id}`
+                              ) as HTMLSelectElement | null;
+                              el?.focus();
+                              el?.click();
+                            }}
+                          >
+                            Reasignar
+                          </Button>
+                        </div>
                       </div>
                     ) : null}
 
