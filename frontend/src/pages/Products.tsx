@@ -7,10 +7,14 @@ import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { isApiErr, type ApiResponse } from "../types/api"
 import type { Product } from "../types/models"
+import { Card, CardBody, CardHeader } from "../components/ui/Card"
+import FormField from "../components/ui/FormField"
+import Button from "../components/ui/Button"
+import { toastErr, toastOk, toastInfo } from "../lib/notify"
 
 const schema = z.object({
-  name: z.string().min(1),
-  price: z.number().positive(),
+  name: z.string().min(1, "Nombre requerido"),
+  price: z.number().positive("Precio debe ser mayor a 0"),
 })
 type FormValues = z.infer<typeof schema>
 
@@ -18,11 +22,19 @@ export default function Products() {
   const { profile } = useAuth()
   const [products, setProducts] = useState<Product[]>([])
   const [loading, setLoading] = useState(true)
+  const [creating, setCreating] = useState(false)
 
-  const { register, handleSubmit, reset, formState: { errors } } = useForm<FormValues, unknown, FormValues>({
-    resolver: zodResolver<FormValues, unknown, FormValues>(schema),
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<FormValues>({
+    resolver: zodResolver(schema),
     defaultValues: { name: "", price: 0 },
   })
+
+  const isAdmin = profile?.role === "admin"
 
   const load = async () => {
     setLoading(true)
@@ -30,17 +42,12 @@ export default function Products() {
     try {
       const r = await apiFetch<ApiResponse<Product[]>>("/products")
       console.log("[products] res", r)
-
-      if (isApiErr(r)) {
-        console.log("[products] api err", r.error)
-        throw new Error(r.error)
-      }
-
+      if (isApiErr(r)) throw new Error(r.error)
       setProducts(r.data)
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "error"
       console.log("[products] error", msg)
-      alert(msg)
+      toastErr(msg)
     } finally {
       setLoading(false)
     }
@@ -48,24 +55,23 @@ export default function Products() {
 
   const onCreate = async (v: FormValues) => {
     console.log("[products] create submit", v, "role", profile?.role)
+    setCreating(true)
     try {
       const r = await apiFetch<ApiResponse<Product>>("/products", {
         method: "POST",
         body: JSON.stringify(v),
       })
       console.log("[products] create ok", r)
-
-      if (isApiErr(r)) {
-        console.log("[products] api err", r.error)
-        throw new Error(r.error)
-      }
-
+      if (isApiErr(r)) throw new Error(r.error)
+      toastOk("Producto creado")
       reset({ name: "", price: 0 })
       load()
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "error"
       console.log("[products] create error", msg)
-      alert(msg)
+      toastErr(msg)
+    } finally {
+      setCreating(false)
     }
   }
 
@@ -73,59 +79,87 @@ export default function Products() {
     load()
   }, [])
 
-  const isAdmin = profile?.role === "admin"
+  useEffect(() => {
+    if (!isAdmin) {
+      console.log("[products] role mesero info")
+      toastInfo("Rol mesero: no podés crear productos")
+    }
+  }, [isAdmin])
 
   return (
     <div>
       <NavBar />
-      <div className="p-6">
-        <h1 className="text-xl font-semibold">Products</h1>
 
-        {isAdmin && (
-          <div className="border p-4 mt-4">
-            <div className="font-semibold">Create product</div>
+      <div className="container-app py-6">
+        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+          <div>
+            <h1 className="text-2xl font-black tracking-tight">Products</h1>
+            <div className="text-sm text-slate-400">Catálogo del restaurante</div>
+          </div>
 
-            <form onSubmit={handleSubmit(onCreate)} className="mt-3 space-y-2">
-              <input className="border p-2 w-full" placeholder="name" {...register("name")} />
-              {errors.name && <div className="text-sm text-red-600">{errors.name.message}</div>}
+          <Button variant="secondary" onClick={load} loading={loading}>
+            Refresh
+          </Button>
+        </div>
 
-              <input
-                className="border p-2 w-full"
-                placeholder="price"
-                type="number"
-                step="0.01"
-                {...register("price", { valueAsNumber: true })}
-              />
-              {errors.price && <div className="text-sm text-red-600">{errors.price.message}</div>}
+        {isAdmin ? (
+          <Card className="mt-5">
+            <CardHeader>
+              <div className="text-sm font-black">Create product</div>
+              <div className="text-xs text-slate-400">Nombre requerido · precio &gt; 0</div>
+            </CardHeader>
 
-              <button className="border px-3 py-1">Create</button>
-            </form>
+            <CardBody>
+              <form onSubmit={handleSubmit(onCreate)} className="grid gap-3 sm:grid-cols-2">
+                <FormField label="Nombre" error={errors.name?.message}>
+                  <input className="input" placeholder="Ej: Hamburguesa completa" {...register("name")} />
+                </FormField>
+
+                <FormField label="Precio" hint="ARS o USD según tu criterio" error={errors.price?.message}>
+                  <input
+                    className="input"
+                    placeholder="Ej: 12.50"
+                    type="number"
+                    step="0.01"
+                    {...register("price", { valueAsNumber: true })}
+                  />
+                </FormField>
+
+                <div className="sm:col-span-2 flex items-center justify-end gap-2">
+                  <Button type="button" variant="ghost" onClick={() => reset({ name: "", price: 0 })}>
+                    Limpiar
+                  </Button>
+                  <Button type="submit" variant="primary" loading={creating}>
+                    Crear
+                  </Button>
+                </div>
+              </form>
+            </CardBody>
+          </Card>
+        ) : (
+          <div className="mt-5 card p-4 text-sm text-slate-300">
+            Tu rol es <span className="font-black">mesero</span>: no podés crear productos.
           </div>
         )}
 
-        {!isAdmin && (
-          <div className="mt-4 text-sm opacity-70">
-            Tu rol es mesero: no podés crear productos.
-          </div>
-        )}
+        <div className="mt-5 grid gap-2">
+          {loading ? <div className="card p-6 text-sm text-slate-300">Loading...</div> : null}
 
-        <button className="border px-3 py-1 mt-4" onClick={load}>
-          Refresh
-        </button>
+          {!loading && !products.length ? (
+            <div className="card p-6 text-sm text-slate-300">No products</div>
+          ) : null}
 
-        {loading && <div className="mt-4">Loading...</div>}
-
-        {!loading && (
-          <div className="mt-4 space-y-2">
-            {products.map((p) => (
-              <div key={p.id} className="border p-3 flex justify-between">
-                <div>{p.name}</div>
-                <div>${p.price}</div>
+          {!loading &&
+            products.map((p) => (
+              <div key={p.id} className="card p-4 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <div className="font-black truncate">{p.name}</div>
+                  <div className="text-xs text-slate-400">id #{p.id}</div>
+                </div>
+                <div className="text-sm font-black text-emerald-200">${p.price}</div>
               </div>
             ))}
-            {!products.length && <div>No products</div>}
-          </div>
-        )}
+        </div>
       </div>
     </div>
   )

@@ -1,3 +1,63 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@layer base {
+  html, body {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-slate-950 text-slate-100 antialiased;
+  }
+}
+
+@layer components {
+  .container-app {
+    @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
+  }
+
+  .card {
+    @apply rounded-2xl border border-slate-800 bg-slate-900/60 shadow-sm;
+  }
+
+  .card-h {
+    @apply border-b border-slate-800 px-4 py-3 sm:px-6;
+  }
+
+  .card-b {
+    @apply px-4 py-4 sm:px-6;
+  }
+
+  .input {
+    @apply w-full rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2 text-slate-100 outline-none ring-0 placeholder:text-slate-500 focus:border-slate-600 focus:bg-slate-950;
+  }
+
+  .select {
+    @apply w-full rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2 text-slate-100 outline-none focus:border-slate-600;
+  }
+
+  .helper {
+    @apply text-xs text-slate-400;
+  }
+
+  .error {
+    @apply text-xs text-red-400;
+  }
+
+  .badge {
+    @apply inline-flex items-center rounded-full border border-slate-700 bg-slate-900 px-2 py-0.5 text-xs text-slate-200;
+  }
+
+  .badge-green {
+    @apply border-emerald-800/60 bg-emerald-950/40 text-emerald-200;
+  }
+
+  .badge-red {
+    @apply border-rose-800/60 bg-rose-950/40 text-rose-200;
+  }
+
+  .badge-yellow {
+    @apply border-amber-800/60 bg-amber-950/40 text-amber-200;
+  }
+}
