@@ -8,7 +8,8 @@ Aplicación web para la gestión de órdenes en un restaurante (productos + órd
 - **Backend (Health):** https://ocean-snowy.vercel.app/health
 - **Swagger / OpenAPI (local):** http://localhost:8080/docs/
 
----
+EN DOCKER USAR! app\frontend\.env.docker
+
 
 ## ✅ Cobertura de requisitos del challenge
 
