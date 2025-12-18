@@ -181,7 +181,7 @@ export default function Orders() {
     });
 
     const r0 = await Swal.fire({
-      title: "Marcar como Closed",
+      title: "Marcar como Cerrado",
       text: "Esto indica que la orden fue entregada. ¿Confirmás?",
       icon: "warning",
       showCancelButton: true,
@@ -206,7 +206,7 @@ export default function Orders() {
       console.log("[orders] setOrderStatus res", r);
       if (isApiErr(r)) throw new Error(r.error);
 
-      toastOk("Orden marcada como Closed");
+      toastOk("Orden marcada como Cerrado");
       loadAll();
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : "error";
@@ -262,9 +262,9 @@ export default function Orders() {
       <div className="container-app py-6">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
           <div>
-            <h1 className="text-2xl font-black tracking-tight">Orders</h1>
+            <h1 className="text-2xl font-black tracking-tight">Órdenes</h1>
             <div className="text-sm text-slate-400">
-              Mesero crea y se asigna solo · Admin puede reasignar · Close por
+              Un Mesero puede crear una orden y autosign. · Admin puede reasignar · Solo cierra el
               mesero asignado o admin
             </div>
           </div>
@@ -278,7 +278,7 @@ export default function Orders() {
           <CardHeader>
             <div className="flex items-center justify-between gap-3">
               <div>
-                <div className="text-sm font-black">Create order</div>
+                <div className="text-sm font-black">Crear orden</div>
                 <div className="text-xs text-slate-400">
                   Total en tiempo real · UX con botones + / -
                 </div>
@@ -313,18 +313,24 @@ export default function Orders() {
                     <div className="flex items-center gap-2">
                       <Button
                         variant="danger"
-                        size="sm"
+                        size="icon"
+                        className="font-black"
                         onClick={() => toggleQty(p.id, -1)}
                       >
-                        -
+                        <span className="relative -top-[2px]">−</span>
                       </Button>
-                      <div className="w-10 text-center font-black">{qty}</div>
+
+                      <div className="w-10 text-center font-black text-lg">
+                        {qty}
+                      </div>
+
                       <Button
                         variant="primary"
-                        size="sm"
+                        size="icon"
+                        className="font-black"
                         onClick={() => toggleQty(p.id, 1)}
                       >
-                        +
+                        <span className="relative -top-[2px]">+</span>
                       </Button>
                     </div>
                   </div>
@@ -425,9 +431,7 @@ export default function Orders() {
                           ))}
                         </select>
 
-                        <div className="text-xs text-slate-400">
-                          Reasign.
-                        </div>
+                        <div className="text-xs text-slate-400">Reasign.</div>
                       </div>
                     ) : null}
 

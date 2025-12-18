@@ -3,18 +3,35 @@
 @tailwind utilities;
 
 @layer base {
-  html, body {
+  html,
+  body {
     height: 100%;
   }
 
   body {
     @apply bg-slate-950 text-slate-100 antialiased;
   }
+
+  * {
+    @apply scroll-smooth;
+  }
+
+  :root {
+    color-scheme: dark;
+  }
+
+  ::selection {
+    @apply bg-emerald-500/20 text-slate-100;
+  }
 }
 
 @layer components {
   .container-app {
     @apply mx-auto w-full max-w-6xl px-4 sm:px-6;
+  }
+
+  .focus-ring {
+    @apply outline-none ring-0 focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950;
   }
 
   .card {
@@ -30,11 +47,15 @@
   }
 
   .input {
-    @apply w-full rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2 text-slate-100 outline-none ring-0 placeholder:text-slate-500 focus:border-slate-600 focus:bg-slate-950;
+    @apply w-full rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2 text-slate-100 placeholder:text-slate-500;
+    @apply outline-none focus:border-slate-600 focus:bg-slate-950;
+    @apply focus-visible:ring-2 focus-visible:ring-emerald-400/30 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950;
   }
 
   .select {
-    @apply w-full rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2 text-slate-100 outline-none focus:border-slate-600;
+    @apply w-full rounded-xl border border-slate-800 bg-slate-950/60 px-3 py-2 text-slate-100;
+    @apply outline-none focus:border-slate-600;
+    @apply focus-visible:ring-2 focus-visible:ring-emerald-400/30 focus-visible:ring-offset-2 focus-visible:ring-offset-slate-950;
   }
 
   .helper {
@@ -42,11 +63,15 @@
   }
 
   .error {
-    @apply text-xs text-red-400;
+    @apply text-xs text-rose-300;
+  }
+
+  .link {
+    @apply underline decoration-slate-600 underline-offset-4 hover:decoration-slate-300;
   }
 
   .badge {
-    @apply inline-flex items-center rounded-full border border-slate-700 bg-slate-900 px-2 py-0.5 text-xs text-slate-200;
+    @apply inline-flex items-center gap-1 rounded-full border border-slate-700 bg-slate-900 px-2 py-0.5 text-xs text-slate-200;
   }
 
   .badge-green {
@@ -60,4 +85,23 @@
   .badge-yellow {
     @apply border-amber-800/60 bg-amber-950/40 text-amber-200;
   }
+
+  .divider {
+    @apply h-px w-full bg-slate-800;
+  }
+}
+
+.Toastify__toast {
+  border: 1px solid rgb(30 41 59);
+  background: rgba(2, 6, 23, 0.85);
+  color: rgb(226 232 240);
+  border-radius: 16px;
+}
+
+.Toastify__toast-body {
+  font-size: 14px;
+}
+
+.Toastify__progress-bar {
+  background: rgba(16, 185, 129, 0.7);
 }

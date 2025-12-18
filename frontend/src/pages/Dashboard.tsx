@@ -58,7 +58,7 @@ export default function Dashboard() {
           {loading ? <div className="card p-6 text-sm text-slate-300">Loading...</div> : null}
 
           {!loading && !orders.length ? (
-            <EmptyState title="No hay órdenes todavía" description="Creá una orden desde Orders" />
+            <EmptyState title="No hay órdenes todavía" description="Creá una orden desde Órdenes" />
           ) : null}
 
           {!loading &&

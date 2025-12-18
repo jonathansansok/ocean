@@ -1,10 +1,14 @@
 import { cn } from "../../lib/cn"
 
 export default function StatusBadge({ status }: { status: "saved" | "closed" }) {
-  const klass =
-    status === "closed" ? "badge badge-green" : "badge badge-yellow"
+  console.log("[StatusBadge] render", { status })
 
   const label = status === "closed" ? "Closed" : "Saved"
 
-  return <span className={cn(klass)}>{label}</span>
+  const klass = cn(
+    "badge",
+    status === "closed" ? "badge-green" : "badge-yellow"
+  )
+
+  return <span className={klass}>{label}</span>
 }
