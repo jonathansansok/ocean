@@ -13,9 +13,13 @@ export type OrderItem = {
 }
 
 export type Order = {
-  id: number
-  status: string
-  total: number
-  created_at: string
-  order_items: OrderItem[]
-}
+  id: number;
+  status: string;
+  total: number;
+  created_at: string;
+  created_by: string | null;
+  assigned_to: string | null;
+  created_by_profile?: { id: string; email: string; role: string } | null;
+  assigned_to_profile?: { id: string; email: string; role: string } | null;
+  order_items: OrderItem[];
+};

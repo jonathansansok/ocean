@@ -7,7 +7,7 @@ import { ordersRouter } from "../src/routes/orders.js";
 import { openapi } from "../src/swagger.js";
 import { authRouter } from "../src/routes/auth.js";
 import { errorMiddleware } from "../src/middlewares/error.js";
-
+import { profilesRouter } from "../src/routes/profiles.js";
 const app = express();
 
 app.use(cors({ origin: true, credentials: true }));
@@ -20,6 +20,7 @@ app.get("/health", (req, res) => {
 
 app.use("/docs", swaggerUi.serve, swaggerUi.setup(openapi));
 app.use("/auth", authRouter);
+app.use("/profiles", profilesRouter);
 app.use("/products", productsRouter);
 app.use("/orders", ordersRouter);
 app.use(errorMiddleware);

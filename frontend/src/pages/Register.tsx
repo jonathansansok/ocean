@@ -1,3 +1,4 @@
+//app\frontend\src\pages\Register.tsx
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -17,7 +18,11 @@ export default function Register() {
   const [loading, setLoading] = useState(false);
   const nav = useNavigate();
 
-  const { register, handleSubmit, formState: { errors } } = useForm<FormValues>({
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<FormValues>({
     resolver: zodResolver(schema),
     defaultValues: { role: "mesero" },
   });
@@ -36,13 +41,23 @@ export default function Register() {
       const text = await res.text();
       console.log("[register] res", { ok: res.ok, status: res.status, text });
 
-      if (!res.ok) throw new Error(text || "register failed");
+      if (!res.ok) {
+        let msg = text || "register failed";
+        try {
+          const j = JSON.parse(text) as { error?: string };
+          if (j?.error) msg = j.error;
+        } catch (e: unknown) {
+          console.log("[register] json parse fail", { text, e });
+        }
+        throw new Error(msg);
+      }
 
       alert("Cuenta creada. Ahora logueate.");
       nav("/login");
-    } catch (e: any) {
-      console.log("[register] error", e?.message);
-      alert(e?.message || "error");
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "error";
+      console.log("[register] error", { msg, e });
+      alert(msg);
     } finally {
       setLoading(false);
     }
