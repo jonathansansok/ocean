@@ -5,8 +5,8 @@ const base = import.meta.env.VITE_API_BASE as string
 export async function apiFetch<T>(path: string, init?: RequestInit): Promise<T> {
   const session = await supabase.auth.getSession()
   const token = session.data.session?.access_token || ""
-  console.log("[apiFetch][REQ]", { path, hasToken: !!token, base })
-
+  //console.log("[apiFetch][REQ]", { path, hasToken: !!token, base })
+console.log("[apiFetch][REQ]", { path, base, token })
   const res = await fetch(`${base}${path}`, {
     ...init,
     headers: {
