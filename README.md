@@ -54,6 +54,34 @@ npm run coverage
 
 ---
 
+## 🧪 Integration Testing (Frontend)
+
+Además de unit tests, se agregaron **integration tests de UI** con **Vitest + React Testing Library**, mockeando `apiFetch` (sin pegarle a red) para validar flujos completos por rol.
+
+### Archivos testeados (integration)
+- `src/pages/Products.int.test.tsx`
+  - `admin`: ve formulario, crea producto (POST `/products`) y recarga lista
+  - `mesero`: NO ve formulario de creación (restricción del challenge)
+- `src/pages/Orders.int.test.tsx`
+  - `mesero`: selecciona productos y crea orden `saved` (POST `/orders`) y recarga
+  - `admin`: carga meseros y reasigna (PATCH `/orders/:id/assign`)
+  - `mesero`: NO asignado no puede cerrar; asignado sí (PATCH `/orders/:id/status`)
+- `src/pages/Dashboard.int.test.tsx`
+  - renderiza órdenes desde (GET `/orders`) con items
+  - si `apiFetch` falla muestra `toastErr`
+
+### Ejecutar tests
+En `app/frontend`:
+
+```bash
+npm run test
+npm run test:run
+npm run test:ui
+npm run coverage
+
+
+---
+
 ## ✅ Cobertura de requisitos del challenge
 
 ### Requeridos (cumplidos)
