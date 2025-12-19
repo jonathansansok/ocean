@@ -36,6 +36,22 @@
 - `VITE_SUPABASE_ANON_KEY=...`
 -  Ejecutar `docker compose up --build`
 
+
+---
+
+## 🧪 Unit Testing (Frontend)
+
+Los unit tests están implementados con **Vitest + React Testing Library**.
+
+### Ejecutar tests (en `app/frontend`)
+
+```bash
+npm run test
+npm run test:run
+npm run test:ui
+npm run coverage
+
+
 ---
 
 ## ✅ Cobertura de requisitos del challenge
