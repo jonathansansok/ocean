@@ -64,16 +64,20 @@ describe("Products integration", () => {
         }
 
         if (path === "/products" && init?.method === "POST") {
-          const body = JSON.parse(String(init.body || "{}")) as {
-            name: string;
-            price: number;
-          };
-          console.log("[test][apiFetchMock] POST /products body", body);
+  const body = JSON.parse(String(init.body || "{}")) as {
+    name: string
+    price: number
+  }
+  console.log("[test][apiFetchMock] POST /products body", body)
 
-          const next: Product = { id: 2, name: body.name, price: body.price };
-          productsState = [next, ...productsState];
-          return { data: next } satisfies ApiResponse<Product>;
-        }
+  expect(typeof body.price).toBe("number")
+  expect(body.price).toBe(25)
+
+  const next: Product = { id: 2, name: body.name, price: body.price }
+  productsState = [next, ...productsState]
+  return { data: next } satisfies ApiResponse<Product>
+}
+
 
         throw new Error("unexpected apiFetch path " + path);
       }

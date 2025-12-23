@@ -2,7 +2,7 @@ import { useEffect, useState } from "react"
 import NavBar from "../components/NavBar"
 import { apiFetch } from "../lib/api"
 import { useAuth } from "../auth/useAuth"
-import { useForm } from "react-hook-form"
+import { useForm, type SubmitHandler } from "react-hook-form"
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { isApiErr, type ApiResponse } from "../types/api"
@@ -14,9 +14,22 @@ import { toastErr, toastOk, toastInfo } from "../lib/notify"
 
 const schema = z.object({
   name: z.string().min(1, "Nombre requerido"),
-  price: z.number().positive("Precio debe ser mayor a 0"),
+  price: z.preprocess(
+  (v) => {
+    const n = typeof v === "string" ? Number(v) : v
+    console.log("[products][zod] preprocess price", { raw: v, n })
+    if (typeof n === "number" && Number.isNaN(n)) return undefined
+    return n
+  },
+  z
+    .number()
+    .refine((x) => Number.isFinite(x), "Precio inválido")
+    .positive("Precio debe ser mayor a 0")
+),
 })
-type FormValues = z.infer<typeof schema>
+
+type FormInput = z.input<typeof schema>
+type FormValues = z.output<typeof schema>
 
 export default function Products() {
   const { profile } = useAuth()
@@ -29,7 +42,7 @@ export default function Products() {
     handleSubmit,
     reset,
     formState: { errors },
-  } = useForm<FormValues>({
+  } = useForm<FormInput>({
     resolver: zodResolver(schema),
     defaultValues: { name: "", price: 0 },
   })
@@ -53,8 +66,20 @@ export default function Products() {
     }
   }
 
-  const onCreate = async (v: FormValues) => {
-    console.log("[products] create submit", v, "role", profile?.role)
+  const onCreate: SubmitHandler<FormInput> = async (raw) => {
+    console.log("[products] create submit raw", raw, "role", profile?.role)
+
+    let v: FormValues
+    try {
+      v = schema.parse(raw)
+      console.log("[products] create parsed", v)
+    } catch (e: unknown) {
+      const msg = e instanceof Error ? e.message : "validation error"
+      console.log("[products] parse error", msg)
+      toastErr("Validación inválida")
+      return
+    }
+
     setCreating(true)
     try {
       const r = await apiFetch<ApiResponse<Product>>("/products", {
@@ -115,7 +140,7 @@ export default function Products() {
                   <input className="input" placeholder="Ej: Hamburguesa completa" {...register("name")} />
                 </FormField>
 
-                <FormField label="Precio" hint="ARS o USD según tu criterio" error={errors.price?.message}>
+                <FormField label="Precio" hint="ARS o USD según tu criterio" error={errors.price?.message as string | undefined}>
                   <input
                     className="input"
                     placeholder="Ej: 12.50"
