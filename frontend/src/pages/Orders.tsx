@@ -308,6 +308,7 @@ export default function Orders() {
               {products.map((p) => {
                 const qty = selected[p.id] ?? 0;
                 const line = qty * p.price;
+
                 return (
                   <div
                     key={p.id}
@@ -320,28 +321,115 @@ export default function Orders() {
                       </div>
                     </div>
 
-                    <div className="flex items-center justify-end gap-2 w-full sm:w-auto shrink-0">
-                      <Button
-                        variant="danger"
-                        size="icon"
-                        className="font-black shrink-0 w-10 h-10"
-                        onClick={() => toggleQty(p.id, -1)}
-                      >
-                        <span className="relative -top-[2px]">−</span>
-                      </Button>
+                    <div className="w-full sm:w-auto shrink-0">
+                      <div className="flex items-center justify-end gap-1.5">
+                        <button
+                          type="button"
+                          aria-label={`Quitar ${p.name}`}
+                          className="
+                  w-9 h-9 sm:w-10 sm:h-10
+                  grid place-items-center
+                  rounded-full sm:rounded-xl
+                  bg-transparent border border-transparent
+                  sm:bg-slate-950/40 sm:border-slate-800
+                  shadow-none ring-0
+                  active:scale-95 transition
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-600/60
+                "
+                          onClick={() => {
+                            console.log("[orders] qty minus click", {
+                              id: p.id,
+                              name: p.name,
+                              qty,
+                            });
+                            toggleQty(p.id, -1);
+                          }}
+                        >
+                          <svg
+                            viewBox="0 0 24 24"
+                            className="
+                    block
+                    w-7 h-7 sm:w-6 sm:h-6
+                    text-[#ff2a2a]
+                    drop-shadow-[0_0_14px_rgba(255,42,42,0.75)]
+                  "
+                            aria-hidden="true"
+                          >
+                            <rect
+                              x="5"
+                              y="11"
+                              width="14"
+                              height="2"
+                              rx="1"
+                              fill="currentColor"
+                            />
+                          </svg>
+                        </button>
 
-                      <div className="w-10 text-center font-black text-lg shrink-0">
-                        {qty}
+                        <div
+                          className="
+                  w-8 sm:w-10
+                  h-9 sm:h-10
+                  grid place-items-center
+                  font-black text-lg sm:text-xl
+                  tabular-nums
+                  text-slate-100
+                "
+                        >
+                          {qty}
+                        </div>
+
+                        <button
+                          type="button"
+                          aria-label={`Sumar ${p.name}`}
+                          className="
+                  w-9 h-9 sm:w-10 sm:h-10
+                  grid place-items-center
+                  rounded-full sm:rounded-xl
+                  bg-transparent border border-transparent
+                  sm:bg-slate-950/40 sm:border-slate-800
+                  shadow-none ring-0
+                  active:scale-95 transition
+                  focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-600/60
+                "
+                          onClick={() => {
+                            console.log("[orders] qty plus click", {
+                              id: p.id,
+                              name: p.name,
+                              qty,
+                            });
+                            toggleQty(p.id, 1);
+                          }}
+                        >
+                          <svg
+                            viewBox="0 0 24 24"
+                            className="
+                    block
+                    w-7 h-7 sm:w-6 sm:h-6
+                    text-[#39ff14]
+                    drop-shadow-[0_0_14px_rgba(57,255,20,0.75)]
+                  "
+                            aria-hidden="true"
+                          >
+                            <rect
+                              x="5"
+                              y="11"
+                              width="14"
+                              height="2"
+                              rx="1"
+                              fill="currentColor"
+                            />
+                            <rect
+                              x="11"
+                              y="5"
+                              width="2"
+                              height="14"
+                              rx="1"
+                              fill="currentColor"
+                            />
+                          </svg>
+                        </button>
                       </div>
-
-                      <Button
-                        variant="primary"
-                        size="icon"
-                        className="font-black shrink-0 w-10 h-10"
-                        onClick={() => toggleQty(p.id, 1)}
-                      >
-                        <span className="relative -top-[2px]">+</span>
-                      </Button>
                     </div>
                   </div>
                 );
