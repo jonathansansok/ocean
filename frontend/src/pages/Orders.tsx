@@ -268,7 +268,7 @@ export default function Orders() {
     <div>
       <NavBar />
 
-      <div className="container-app py-6">
+      <div className="mx-auto w-full max-w-5xl px-4 sm:px-6 py-6 overflow-x-hidden">
         <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
           <div>
             <h1 className="text-2xl font-black tracking-tight">Órdenes</h1>
@@ -289,7 +289,8 @@ export default function Orders() {
               <div>
                 <div className="text-sm font-black">Crear orden</div>
                 <div className="text-xs text-slate-400">
-                  Total en tiempo real · Solo puedes crear y se asigna a ti mismo.
+                  Total en tiempo real · Solo puedes crear y se asigna a ti
+                  mismo.
                 </div>
               </div>
 
@@ -310,33 +311,33 @@ export default function Orders() {
                 return (
                   <div
                     key={p.id}
-                    className="rounded-2xl border border-slate-800 bg-slate-950/40 p-4 flex items-center justify-between gap-3"
+                    className="rounded-2xl border border-slate-800 bg-slate-950/40 p-4 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3"
                   >
-                    <div className="min-w-0">
+                    <div className="min-w-0 flex-1">
                       <div className="font-black truncate">{p.name}</div>
                       <div className="text-xs text-slate-400">
                         ${p.price} · line ${line.toFixed(2)}
                       </div>
                     </div>
 
-                    <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-end gap-2 w-full sm:w-auto shrink-0">
                       <Button
                         variant="danger"
                         size="icon"
-                        className="font-black"
+                        className="font-black shrink-0 w-10 h-10"
                         onClick={() => toggleQty(p.id, -1)}
                       >
                         <span className="relative -top-[2px]">−</span>
                       </Button>
 
-                      <div className="w-10 text-center font-black text-lg">
+                      <div className="w-10 text-center font-black text-lg shrink-0">
                         {qty}
                       </div>
 
                       <Button
                         variant="primary"
                         size="icon"
-                        className="font-black"
+                        className="font-black shrink-0 w-10 h-10"
                         onClick={() => toggleQty(p.id, 1)}
                       >
                         <span className="relative -top-[2px]">+</span>
